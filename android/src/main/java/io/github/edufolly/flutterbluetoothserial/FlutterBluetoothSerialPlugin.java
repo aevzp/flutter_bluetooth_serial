@@ -894,6 +894,19 @@ public class FlutterBluetoothSerialPlugin implements FlutterPlugin, ActivityAwar
                     break;
 
                 case "getConnectGamePadDevices":
+//                    For the future implementation
+//                    private boolean isDualShock4(InputDevice inputDevice)
+//                    {
+//                        // Sony DualShock 4 controller
+//                        return inputDevice.getVendorId() == 0x54c && inputDevice.getProductId() == 0x9cc;
+//                    }
+//
+//                    private boolean isXboxOneWireless(InputDevice inputDevice)
+//                    {
+//                        // Microsoft Xbox One controller
+//                        return inputDevice.getVendorId() == 0x45e && inputDevice.getProductId() == 0x2e0;
+//                    }
+
                     ArrayList<String> gameControllerDeviceIds = new ArrayList<String>();
                     int[] deviceIds = InputDevice.getDeviceIds();
 
