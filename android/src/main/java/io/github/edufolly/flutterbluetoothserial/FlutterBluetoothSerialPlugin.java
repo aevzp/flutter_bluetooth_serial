@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.util.SparseArray;
 import android.os.AsyncTask;
+import android.view.InputDevice;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -319,7 +320,7 @@ public class FlutterBluetoothSerialPlugin implements FlutterPlugin, ActivityAwar
         messenger = binding.getBinaryMessenger();
 
         methodChannel = new MethodChannel(messenger, PLUGIN_NAMESPACE + "/methods");
-        methodChannel.setMethodCallHandler( new FlutterBluetoothSerialMethodCallHandler() );
+        methodChannel.setMethodCallHandler(new FlutterBluetoothSerialMethodCallHandler());
 
         EventChannel stateChannel = new EventChannel(messenger, PLUGIN_NAMESPACE + "/state");
 
@@ -892,6 +893,28 @@ public class FlutterBluetoothSerialPlugin implements FlutterPlugin, ActivityAwar
                     }
                     break;
 
+                case "getConnectGamePadDevices":
+                    ArrayList<String> gameControllerDeviceIds = new ArrayList<String>();
+                    int[] deviceIds = InputDevice.getDeviceIds();
+
+                    for (int deviceId : deviceIds) {
+                        InputDevice dev = InputDevice.getDevice(deviceId);
+                        int sources = dev.getSources();
+                        boolean testGM = ((sources & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD)
+                                || ((sources & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK);
+
+                        // Todo need to re-think what exactly add to this array
+                        if (testGM) {
+                            final InputDevice inputDevice = InputDevice.getDevice(deviceId);
+                            final String deviceName = inputDevice.getName();
+
+                            gameControllerDeviceIds.add(deviceName);
+                        }
+                    }
+
+                    result.success(gameControllerDeviceIds);
+                    break;
+
                 case "getBondedDevices":
                     ensurePermissions(granted -> {
                         if (!granted) {
@@ -901,6 +924,7 @@ public class FlutterBluetoothSerialPlugin implements FlutterPlugin, ActivityAwar
 
                         List<Map<String, Object>> list = new ArrayList<>();
                         for (BluetoothDevice device : bluetoothAdapter.getBondedDevices()) {
+
                             Map<String, Object> entry = new HashMap<>();
                             entry.put("address", device.getAddress());
                             entry.put("name", device.getName());

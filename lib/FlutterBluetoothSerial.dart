@@ -193,6 +193,12 @@ class FlutterBluetoothSerial {
   }
 
   /// Returns list of bonded devices.
+  Future<List<String>> getConnectGamePadDevices() async {
+    final List list = await (_methodChannel.invokeMethod('getConnectGamePadDevices'));
+    return list.map((map) => map.toString()).toList();
+  }
+
+  /// Returns list of bonded devices.
   Future<List<BluetoothDevice>> getBondedDevices() async {
     final List list = await (_methodChannel.invokeMethod('getBondedDevices'));
     return list.map((map) => BluetoothDevice.fromMap(map)).toList();
